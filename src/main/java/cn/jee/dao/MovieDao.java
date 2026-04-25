@@ -26,7 +26,11 @@ public class MovieDao {
 
     public void addImage(String id, MultipartFile[] images) throws IOException {
         String sql = "select images from user_movie where watch_date = ?";
-        StringBuilder imagesStr = new StringBuilder(Objects.requireNonNull(jdbcTemplate.queryForObject(sql, String.class, id)));
+        String imagesStr0 = jdbcTemplate.queryForObject(sql, String.class, id);
+        if (imagesStr0 == null) {
+            imagesStr0 = "";
+        }
+        StringBuilder imagesStr = new StringBuilder(imagesStr0.trim());
         for (MultipartFile image : images) {
             Path finalPath = Paths.get(defaultImagesPath, image.getOriginalFilename());
             imagesStr.append(" ").append(finalPath);
