@@ -10,7 +10,7 @@ description = 'jee2026_exam_stu'
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(21)
+    languageVersion = JavaLanguageVersion.of(17)
   }
 }
 
@@ -46,6 +46,7 @@ task dbStart(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
   workingDir("db")
   mainClass = 'org.hsqldb.server.Server'
+  args '--database.0', 'file:mydb', '--dbname.0', 'mydb'
 }
 task dbManager(type: JavaExec) {
   group("hsqldb")

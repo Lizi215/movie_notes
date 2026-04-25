@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加电影信息</title>
+</head>
+<body>
+    <form th:action="@{/movie/save-movie}" method="post">
+        观看时间：<input type="text" name="watchDate" required maxlength="10" minlength="10"><br>
+        电影名：<input type="text" name="name" required><br>
+        票价：<input type="number" name="ticketPrice" required min=1><br>
+        评论：<input type="text" name="comment" required minlength="20"><br>
+        <input type="submit">
+    </form>
+    <p th:each="msg:${errorMessages}" th:text="${msg}"></p>
+</body>
+</html>

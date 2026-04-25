@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>电影信息</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>观看时间</th>
+            <th>电影名</th>
+            <th>票价</th>
+            <th>评价</th>
+        </tr>
+        <tr th:each="movie:${movies}">
+            <td th:text="${movie.watchDate}"></td>
+            <td th:text="${movie.name}"></td>
+            <td th:text="${movie.ticketPrice}"></td>
+            <td th:text="${movie.comment}"></td>
+            <td>
+                <a th:href="@{/movie/upload-images(id=${movie.watchDate})}">上传图片</a>
+            </td>
+            <td>
+                <a th:href="@{/movie/look-images(id=${movie.watchDate})}">查看图片</a>
+            </td>
+        </tr>
+    </table>
+    <a th:href="@{/movie/add-movie}">添加电影信息</a>
+</body>
+</html>

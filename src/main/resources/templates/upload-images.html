@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>上传图片</title>
+</head>
+<body>
+    <form th:action="@{/movie/add-image}" method="post" enctype="multipart/form-data">
+        <input type="hidden" th:value="${id}" name="id">
+        上传文件：<input type="file" name="images" multiple required>
+        <input type="submit">
+    </form>
+</body>
+</html>
