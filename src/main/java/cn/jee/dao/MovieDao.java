@@ -37,7 +37,7 @@ public class MovieDao {
             image.transferTo(finalPath);
         }
         sql = "update user_movie set images = ? where watch_date = ?";
-        jdbcTemplate.update(sql, imagesStr.toString(), id);
+        jdbcTemplate.update(sql, imagesStr.toString().trim(), id);
     }
 
     public MovieDto lookImages(String id) {
