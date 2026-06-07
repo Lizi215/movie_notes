@@ -9,11 +9,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import java.util.List;
-import java.util.Objects;
+import java.util.UUID;
 
 @Repository
 public class MovieDao {
@@ -25,6 +25,9 @@ public class MovieDao {
 
 
     public void addImage(String id, MultipartFile[] images) throws IOException {
+        // 确保图片目录存在，不存在则自动创建
+        Files.createDirectories(Paths.get(defaultImagesPath));
+
         String sql = "select images from user_movie where watch_date = ?";
         String imagesStr0 = jdbcTemplate.queryForObject(sql, String.class, id);
         if (imagesStr0 == null) {
@@ -32,12 +35,30 @@ public class MovieDao {
         }
         StringBuilder imagesStr = new StringBuilder(imagesStr0.trim());
         for (MultipartFile image : images) {
-            Path finalPath = Paths.get(defaultImagesPath, image.getOriginalFilename());
+            // 提取原文件扩展名
+            String originalName = image.getOriginalFilename();
+            String ext = "";
+            if (originalName != null && originalName.contains(".")) {
+                ext = originalName.substring(originalName.lastIndexOf("."));
+            }
+            // 使用 UUID 重命名文件，避免中文/空格等特殊字符导致的 URL 问题
+            String uuidName = UUID.randomUUID().toString() + ext;
+            Path finalPath = Paths.get(defaultImagesPath, uuidName);
             imagesStr.append(" ").append(finalPath);
             image.transferTo(finalPath);
         }
         sql = "update user_movie set images = ? where watch_date = ?";
         jdbcTemplate.update(sql, imagesStr.toString().trim(), id);
+    }
+
+    public void updateImages(String watchDate, String imagesStr) {
+        String sql = "update user_movie set images = ? where watch_date = ?";
+        jdbcTemplate.update(sql, imagesStr, watchDate);
+    }
+
+    public void deleteMovie(String watchDate) {
+        String sql = "delete from user_movie where watch_date = ?";
+        jdbcTemplate.update(sql, watchDate);
     }
 
     public MovieDto lookImages(String id) {

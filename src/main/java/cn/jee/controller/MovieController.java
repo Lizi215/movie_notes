@@ -1,9 +1,9 @@
 package cn.jee.controller;
 
 
-import cn.jee.dao.MovieDao;
 import cn.jee.dto.MovieDto;
 import cn.jee.entity.Movie;
+import cn.jee.service.MovieService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -26,20 +26,20 @@ import java.util.List;
 @RequestMapping("/movie")
 public class MovieController {
     @Autowired
-    private MovieDao movieDao;
+    private MovieService movieService;
 
     @RequestMapping("/load-all")
     public String loadAllMovies(HttpSession session, Model model) {
         String username = (String)session.getAttribute("username");
-        List<Movie> movies = movieDao.loadAllMovies(username);
+        List<Movie> movies = movieService.loadAllMovies(username);
         model.addAttribute("movies", movies);
         return "movies";
     }
 
     @RequestMapping("/add-image")
     public String addImage(String id, MultipartFile[] images) throws IOException {
-        movieDao.addImage(id, images);
-        return "redirect:/movie/load-all";
+        movieService.addImage(id, images);
+        return "redirect:/movie/look-images?id=" + id;
     }
 
     @RequestMapping("/upload-images")
@@ -48,10 +48,23 @@ public class MovieController {
         return "upload-images";
     }
 
-    @ResponseBody
     @RequestMapping("/look-images")
-    public MovieDto lookImages(String id) {
-        return movieDao.lookImages(id);
+    public String lookImages(String id, Model model) {
+        MovieDto dto = movieService.lookImages(id);
+        model.addAttribute("movie", dto);
+        return "look-images";
+    }
+
+    @RequestMapping("/delete-movie")
+    public String deleteMovie(String id) {
+        movieService.deleteMovie(id);
+        return "redirect:/movie/load-all";
+    }
+
+    @RequestMapping("/delete-image")
+    public String deleteImage(String id, String imageUrl) {
+        movieService.deleteImage(id, imageUrl);
+        return "redirect:/movie/look-images?id=" + id;
     }
 
     @RequestMapping("/add-movie")
@@ -70,7 +83,7 @@ public class MovieController {
             return "add-movie";
         }
         String username = (String) request.getSession().getAttribute("username");
-        movieDao.saveMovie(movie, username);
+        movieService.saveMovie(movie, username);
         return "redirect:/movie/load-all";
     }
 

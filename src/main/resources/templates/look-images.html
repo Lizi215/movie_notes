@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>查看图片 - [[${movie.name}]]</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .movie-info {
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .image-container {
+            margin-bottom: 30px;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .no-images {
+            color: #999;
+            font-size: 16px;
+            padding: 40px;
+            text-align: center;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .back-link:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1 th:text="'电影：' + ${movie.name}"></h1>
+    <div class="movie-info">
+        <span th:text="'观看时间：' + ${movie.watchDate}"></span>
+    </div>
+
+    <div th:if="${movie.images != null and #arrays.length(movie.images) > 0}"
+         class="image-container"
+         th:each="image : ${movie.images}">
+        <img th:src="${image}" alt="电影图片"/>
+        <br/>
+        <a th:href="@{/movie/delete-image(id=${movie.watchDate}, imageUrl=${image})}"
+           onclick="return confirm('确定删除该图片吗？')"
+           style="font-size: 14px; color: #999;">删除此图片</a>
+    </div>
+
+    <div th:if="${movie.images == null or #arrays.length(movie.images) == 0}"
+         class="no-images">
+        暂无图片
+    </div>
+
+    <a class="back-link" th:href="@{/movie/load-all}">返回列表</a>
+</body>
+</html>
